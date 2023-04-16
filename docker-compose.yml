@@ -1,0 +1,16 @@
+services:
+  editor:
+    container_name: editor
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+    restart: always
+    env_file:
+      - '.env'
+    ports:
+      - 3002:3002
+
+  # Add more containers below (nginx, postgres, etc.)

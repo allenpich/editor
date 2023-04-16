@@ -4,6 +4,7 @@ export {
   TbH1 as H1,
   TbH2 as H2,
   TbH3 as H3,
+  TbH4 as H4,
   TbUnderline as Underline,
   TbStrikethrough as Strikethrough,
   TbQuote as Blockquote,

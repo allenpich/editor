@@ -1,0 +1,18 @@
+services:
+  editor:
+    container_name: editor
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    env_file:
+      - '.env'
+    networks:
+      - allenPich_Cloud
+
+  # Add more containers below (nginx, postgres, etc.)
+
+# Define a network, which allows containers to communicate
+# with each other, by using their container name as a hostname
+networks:
+  allenPich_Cloud:
+    external: true

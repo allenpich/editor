@@ -11,9 +11,9 @@ import {
   Bold,
   Check,
   Code,
-  H1,
   H2,
   H3,
+  H4,
   HorizontalRule,
   ImageAdd,
   Italic,
@@ -366,7 +366,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
             onClick={() =>
               editor.chain().focus().toggleHeading({ level: 2 }).run()
             }
-            icon={<H1 />}
+            icon={<H2 />}
           />
 
           <ToolbarButton
@@ -375,7 +375,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
             onClick={() =>
               editor.chain().focus().toggleHeading({ level: 3 }).run()
             }
-            icon={<H2 />}
+            icon={<H3 />}
           />
 
           <ToolbarButton
@@ -384,7 +384,7 @@ export const Toolbar = ({ editor }: ToolbarProps) => {
             onClick={() =>
               editor.chain().focus().toggleHeading({ level: 4 }).run()
             }
-            icon={<H3 />}
+            icon={<H4 />}
           />
         </ToolbarButtonGroup>
 

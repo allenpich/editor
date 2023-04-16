@@ -1,4 +1,3 @@
-import { del, get, set } from "idb-keyval";
 import _debounce from "lodash.debounce";
 import { useEffect, useState } from "react";
 import create from "zustand";
@@ -13,17 +12,71 @@ interface EditorStore {
   setHasHydrated: (state: boolean) => void;
 }
 
-const IDBStorage: StateStorage = {
+const APIStorage: StateStorage = {
   getItem: async (name) => {
-    return (await get(name)) ?? null;
+    const url = window.location.search
+    const searchParams = new URLSearchParams(url)
+    const token = searchParams.get('token')
+    const id = searchParams.get('id')
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API}/content-update/${id}/`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+      });
+      if (!response.ok) {
+        throw new Error(`Request failed with status code ${response.status}`);
+      }
+      const data = await response.json();
+      return JSON.stringify({state:data, version:0});
+    } catch (error) {
+      return null;
+    }
   },
   setItem: _debounce(async (name: string, value: string) => {
     const parsed = JSON.parse(value);
-    const newValue = JSON.stringify({ ...parsed, lastUpdate: new Date() });
-    await set(name, newValue);
+    const url = window.location.search
+    const searchParams = new URLSearchParams(url)
+    const token = searchParams.get('token')
+    const id = searchParams.get('id')
+
+    const newValue = JSON.stringify({...parsed.state, id:id});
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API}/content-update/${id}/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: newValue
+      });
+      if (!response.ok) {
+        throw new Error(`Request failed with status code ${response.status}`);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }, 1500),
   removeItem: async (name) => {
-    await del(name);
+    const url = window.location.search
+    const searchParams = new URLSearchParams(url)
+    const token = searchParams.get('token')
+    const id = searchParams.get('id')
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API}/content-update/${id}/`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+      });
+      if (!response.ok) {
+        throw new Error(`Request failed with status code ${response.status}`);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   },
 };
 
@@ -42,8 +95,8 @@ export const useEditorStore = create<EditorStore>()(
       },
     }),
     {
-      name: "editor",
-      getStorage: () => IDBStorage,
+      name: 'editor',
+      getStorage: () => APIStorage,
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true);
       },
